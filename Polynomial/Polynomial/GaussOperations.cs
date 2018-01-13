@@ -1,0 +1,30 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Polynomial
+{
+    class GaussOperations
+    {
+        public static double[] CountXVector(double[] bVector, int columns, double[,] matrix)
+        {
+            double[] xVector = new double[bVector.Length];
+            for (int i = bVector.Length - 1; i >= 0; i--)
+            {
+                int j = i;
+                double numerator = bVector[i];
+                while (j < (columns - 1))
+                {
+                    numerator -= (matrix[i, j + 1] * xVector[j + 1]);
+                    j++;
+                }
+                xVector[i] = numerator / matrix[i, i];
+
+            }
+
+            return xVector;
+        }
+    }
+}

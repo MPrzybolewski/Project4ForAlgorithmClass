@@ -17,11 +17,12 @@ namespace Polynomial
 
             Console.WriteLine("F(x)  = {0}x  {1}", coefficientsOfFirstDegreePolynomial[1], coefficientsOfFirstDegreePolynomial[0]);
 
-            double[,] PolynomialTable = FillTableForPolynomial(pointsOfMoreThenOneDegreePolynomial, 2);
-            double[] coefficientsOfPolynomial = CountCoefficientsOfPolynomial(PolynomialTable, 2);
+            //double[,] PolynomialTable = FillTableForPolynomial(pointsOfMoreThenOneDegreePolynomial, 2);
+            //double[] coefficientsOfPolynomial = CountCoefficientsOfPolynomial(PolynomialTable, 2);
 
-
-            Console.WriteLine("F(x) = x^2  x  ");
+            double[,] PolynomialTableTest = FillTableForPolynomial(pointsOfFirstDegreePolynomial, 1);
+            double[] test = CountCoefficientsOfPolynomial(PolynomialTableTest, 1);
+            
 
 
             Console.ReadKey();
@@ -85,8 +86,6 @@ namespace Polynomial
 
                 FillPowElementsInPolynomialTable(tableForPolynomial, PolynomialDegree, i);
                 FillMultiplyElementsInPolynomialTable(tableForPolynomial, PolynomialDegree, i);
-                
-                Console.WriteLine("i = {0}   {1} , {2} , {3} , {4} , {5} , {6} , {7}",i,  tableForPolynomial[i, 0], tableForPolynomial[i, 1], tableForPolynomial[i, 2], tableForPolynomial[i, 3], tableForPolynomial[i, 4], tableForPolynomial[i, 5], tableForPolynomial[i, 6]);
             }
 
             return tableForPolynomial;
@@ -119,13 +118,13 @@ namespace Polynomial
 
         public static double[] CountCoefficientsOfPolynomial(double[,] tableForPolynomialOperations, int polynomialDegree)
         {
-            double[] coefficient = new double[polynomialDegree + 1];
+            double[] coefficients = new double[polynomialDegree + 1];
             int firstIndexOfMultiplyElements = 2 + (2 * polynomialDegree) - 1;
 
 
             int amountOfPoints = tableForPolynomialOperations.GetLength(0);
 
-            double[,] matrixForCountCoefficient = new double[polynomialDegree + 1, polynomialDegree + 1];
+            double[,] matrixCoefficientTable = new double[polynomialDegree + 1, polynomialDegree + 1];
 
             double[] sTable = new double[2 * polynomialDegree + 1];
             double[] tTable = new double[polynomialDegree + 1];
@@ -171,13 +170,21 @@ namespace Polynomial
 
                 for (int j = 0; j < polynomialDegree + 1; j++)
                 {
-                    
-                    matrixForCountCoefficient[i, j] = sTable[i + j];
+                    matrixCoefficientTable[i, j] = sTable[i + j];
                     firstSTableElementInRowIndex++;
                 }
             }
+
+            MyMatrix coefficientsMatrix = new MyMatrix(polynomialDegree + 1, polynomialDegree + 1);
+            coefficientsMatrix.ComplementMatrix(matrixCoefficientTable);
+            coefficientsMatrix.PrintMatrix();
+
+            coefficients = coefficientsMatrix.GaussWithRowChoice(tTable);
+
+            Console.WriteLine("Wyniki");
+            MyMatrix.PrintVector(coefficients);
                 
-            return coefficient;
+            return coefficients;
 
         }
 
