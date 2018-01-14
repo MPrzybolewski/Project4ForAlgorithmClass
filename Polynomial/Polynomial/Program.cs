@@ -8,25 +8,138 @@ namespace Polynomial
     {
         public static void Main(string[] args)
         {
-            double[,] pointsOfFirstDegreePolynomial = { { 1.0, 1.3 }, { 2.0, 3.5 }, { 3.0, 4.2 }, { 4.0, 5.0 }, { 5.0, 7.0 }, { 6.0, 8.8}, {7.0, 10.1}, { 8.0, 12.5}, {9.0, 13.0}, {10.0, 15.6} };
-            double[,] pointsOfMoreThenOneDegreePolynomial = { {0.0, 1.0}, {0.25, 1.284} , {0.5, 1.6487}, {0.75, 2.117} , {1, 2.7183} };
+            // double[,] pointsOfFirstDegreePolynomial = { { 1.0, 1.3 }, { 2.0, 3.5 }, { 3.0, 4.2 }, { 4.0, 5.0 }, { 5.0, 7.0 }, { 6.0, 8.8}, {7.0, 10.1}, { 8.0, 12.5}, {9.0, 13.0}, {10.0, 15.6} };
+            // double[,] pointsOfMoreThenOneDegreePolynomial = { {0.0, 1.0}, {0.25, 1.284} , {0.5, 1.6487}, {0.75, 2.117} , {1, 2.7183} };
+            // double[,] firstDegreePolynomialTable = FillTableForFirstDegreePolynomial(pointsOfFirstDegreePolynomial);
+            // double[] coefficientsOfFirstDegreePolynomial =
+            //     CountCoefficientsOfFirstDegreePolynomial(firstDegreePolynomialTable);
+            //
+            // Console.WriteLine("F(x)  = {0}x  {1}", coefficientsOfFirstDegreePolynomial[1], coefficientsOfFirstDegreePolynomial[0]);
+            //
+            // double[,] PolynomialTable = FillTableForPolynomial(pointsOfMoreThenOneDegreePolynomial, 2);
+            // double[] coefficientsOfPolynomial = CountCoefficientsOfPolynomial(PolynomialTable, 2);
+            //
+            // double[,] PolynomialTableTest = FillTableForPolynomial(pointsOfFirstDegreePolynomial, 1);
+            // double[] test = CountCoefficientsOfPolynomial(PolynomialTableTest, 1);
 
-            double[,] firstDegreePolynomialTable = FillTableForFirstDegreePolynomial(pointsOfFirstDegreePolynomial);
-            double[] coefficientsOfFirstDegreePolynomial =
-                CountCoefficientsOfFirstDegreePolynomial(firstDegreePolynomialTable);
+            double[,] pointsOfGaussWithoutOptimalization = new double[14,2];
+            double[,] pointsOfGaussWithOptimalization = new double[14, 2]; ;
+            double[,] pointsOfMySeidel = new double[14, 2]; ;
 
-            Console.WriteLine("F(x)  = {0}x  {1}", coefficientsOfFirstDegreePolynomial[1], coefficientsOfFirstDegreePolynomial[0]);
+            ReadPointsFromFile(pointsOfGaussWithoutOptimalization, pointsOfGaussWithOptimalization, pointsOfMySeidel);
 
-            //double[,] PolynomialTable = FillTableForPolynomial(pointsOfMoreThenOneDegreePolynomial, 2);
-            //double[] coefficientsOfPolynomial = CountCoefficientsOfPolynomial(PolynomialTable, 2);
-
-            double[,] PolynomialTableTest = FillTableForPolynomial(pointsOfFirstDegreePolynomial, 1);
-            double[] test = CountCoefficientsOfPolynomial(PolynomialTableTest, 1);
-            
-
-
+            ComputeCoefficients(pointsOfGaussWithoutOptimalization, pointsOfGaussWithOptimalization, pointsOfMySeidel);
             Console.ReadKey();
+        }
 
+        public static void ComputeCoefficients(double[,] pointsOfGaussWithoutOptimalization, double[,] pointsOfGaussWithOptimalization, double[,] pointsOfMySeidel)
+        {
+
+            double[,] polynomialForGaussWithoutOptimalization =  FillTableForPolynomial(pointsOfGaussWithoutOptimalization, 3);
+            double[,] polynomialForGaussWithOptimalization = FillTableForPolynomial(pointsOfGaussWithOptimalization , 2);
+            double[,] polynomialForMySeidel = FillTableForPolynomial(pointsOfMySeidel , 2);
+
+            double[] coefficientsForGaussWithoutOptimalization =  CountCoefficientsOfPolynomial(polynomialForGaussWithoutOptimalization, 3);
+            double[] coefficientsForGaussWithOptimalization =
+                CountCoefficientsOfPolynomial(polynomialForGaussWithOptimalization, 2);
+            double[] coefficientsForMySeidel = CountCoefficientsOfPolynomial(polynomialForMySeidel, 2);
+
+
+            // PrintPolynomialResults(coefficientsForGaussWithoutOptimalization, coefficientsForGaussWithOptimalization, coefficientsForMySeidel);
+
+            //PrintMyPonts(pointsOfGaussWithoutOptimalization, pointsOfGaussWithOptimalization, pointsOfMySeidel);
+
+            Console.WriteLine("My points\n");
+            Console.WriteLine("Gauss without optimalization");
+            double error = 0;
+            
+            for (int n = 2; n <= 15; n++)
+            {
+                Console.WriteLine("f({0}) = {1} , F({0}) = {2}", n, pointsOfGaussWithoutOptimalization[n - 2, 1], FunctionResult(coefficientsForGaussWithoutOptimalization, n));
+                error += pointsOfGaussWithoutOptimalization[n - 2, 1] -
+                         FunctionResult(coefficientsForGaussWithoutOptimalization, n);
+            }
+
+            Console.WriteLine("Error:  {0}", Pow(error,2));
+            error = 0;
+
+            Console.WriteLine("Gauss with optimalization");
+            for (int n = 2; n <= 15; n++)
+            {
+                Console.WriteLine("f({0}) = {1} , F({0}) = {2}", n, pointsOfGaussWithOptimalization[n - 2, 1], FunctionResult(coefficientsForGaussWithOptimalization, n));
+                error += pointsOfGaussWithOptimalization[n - 2, 1] -
+                         FunctionResult(coefficientsForGaussWithOptimalization, n);
+            }
+
+            Console.WriteLine("Error:  {0}", Pow(error, 2));
+            error = 0;
+
+            Console.WriteLine("Seidel from c#");
+            for (int n = 2; n <= 15; n++)
+            {
+                Console.WriteLine("f({0}) = {1} , F({0}) = {2}", n, pointsOfMySeidel[n - 2, 1], FunctionResult(coefficientsForMySeidel, n));
+                error += pointsOfMySeidel[n - 2, 1] -
+                         FunctionResult(coefficientsForMySeidel, n);
+            }
+
+            Console.WriteLine("Error:  {0}", Pow(error, 2));
+        }
+
+        private static void PrintMyPonts(double[,] pointsOfGaussWithoutOptimalization, double[,] pointsOfGaussWithOptimalization, double[,] pointsOfMySeidel)
+        {
+            Console.WriteLine("My points\n");
+            Console.WriteLine("Gauss without optimalization");
+            for (int n = 2; n <= 15; n++)
+            {
+            //    Console.WriteLine("f({0}) = {1} , F({0}) = {2}", n, pointsOfGaussWithoutOptimalization[n - 2, 1], FunctionResult(coefficientsForGaussWithoutOptimalization, n));
+            }
+
+            Console.WriteLine("Gauss with optimalization");
+            for (int n = 2; n <= 15; n++)
+            {
+           //     Console.WriteLine("f({0}) = {1} , F({0}) = {2}", n, pointsOfGaussWithOptimalization[n - 2, 1], FunctionResult(coefficientsForGaussWithOptimalization, n));
+            }
+
+            Console.WriteLine("Seidel from c#");
+            for (int n = 2; n <= 15; n++)
+            {
+           //     Console.WriteLine("f({0}) = {1} , F({0}) = {2}", n, pointsOfMySeidel[n - 2, 1], FunctionResult(coefficientsForMySeidel, n));
+            }
+
+        }
+
+        public static void PrintPolynomialResults(double[] coefficientsForGaussWithoutOptimalization, 
+            double[] coefficientsForGaussWithOptimalization, double[] coefficientsForMySeidel)
+        {
+            Console.WriteLine("Polynomial results \n");
+            Console.WriteLine("Gauss without optimalization");
+            for (int n = 2; n <= 15; n++)
+            {
+                Console.WriteLine("F({0}) = {1} ", n, FunctionResult(coefficientsForGaussWithoutOptimalization, n));
+            }
+
+            Console.WriteLine("Gauss with optimalization");
+            for (int n = 2; n <= 15; n++)
+            {
+                Console.WriteLine("F({0}) = {1} ", n, FunctionResult(coefficientsForGaussWithOptimalization, n));
+            }
+
+            Console.WriteLine("Seidel from c#");
+            for (int n = 2; n <= 15; n++)
+            {
+                Console.WriteLine("F({0}) = {1} ", n, FunctionResult(coefficientsForMySeidel, n));
+            }
+        }
+
+        public static double FunctionResult(double[] coefficients, int n)
+        {
+            double time = 0;
+            for (int i = 0; i < coefficients.Length; i++)
+            {
+                time += Pow(n, i) * coefficients[i];
+            }
+
+            return time;
         }
 
         public static double[,] FillTableForFirstDegreePolynomial(double[,] points)
@@ -202,6 +315,30 @@ namespace Polynomial
             }
 
             return 1;
+        }
+
+        public static void ReadPointsFromFile(double[,] pointsOfGaussWithoutOptimalization,
+            double[,] pointsOfGaussWithOptimalization, double[,] pointsOfMySeidel)
+        {
+            string[] lines = System.IO.File.ReadAllLines("C:\\Users\\Marek\\Documents\\Project4ForAlgorithmClass\\" + "Results.txt");
+
+            int n = 0;
+            foreach (string line in lines)
+            {
+                string[] resultsForN = line.Split(':');
+
+                pointsOfGaussWithoutOptimalization[n, 0] = n + 2;
+                Console.WriteLine(resultsForN[0]);
+                pointsOfGaussWithoutOptimalization[n, 1] = Double.Parse(resultsForN[0]);
+
+                pointsOfGaussWithOptimalization[n, 0] = n + 2;
+                pointsOfGaussWithOptimalization[n, 1] = Double.Parse(resultsForN[1]);
+
+                pointsOfMySeidel[n, 0] = n + 2;
+                pointsOfMySeidel[n, 1] = Double.Parse(resultsForN[2]);
+
+                n++;
+            }
         }
 
     }
